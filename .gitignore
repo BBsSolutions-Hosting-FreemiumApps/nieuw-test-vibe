@@ -5,3 +5,4 @@ media/
 *.db
 .venv/
 .pytest_cache/
+*.egg-info/
