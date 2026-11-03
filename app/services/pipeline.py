@@ -56,11 +56,17 @@ async def process_submission(session: Session, submission_id: int) -> None:
 
         submission.status = "klaar"
         session.commit()
+        link = create_magic_link(session, submission.client_id)
         await telegram_client.send_message(
             submission.client.telegram_user_id or "",
-            "✅ Je update is verwerkt. Tik hier om te bekijken/wijzigen.",
+            f"✅ Je update is verwerkt.\n\nBekijk of wijzig hem hier:\n{link}",
         )
     except Exception as exc:  # noqa: BLE001
+        import logging
+
+        logging.getLogger("content-motor").exception(
+            "Verwerking mislukt voor submission %s", submission_id
+        )
         submission.status = "error"
         submission.error = str(exc)[:1000]
         session.commit()
@@ -68,10 +74,11 @@ async def process_submission(session: Session, submission_id: int) -> None:
 
         client = session.get(Client, submission.client_id)
         if client and client.telegram_user_id:
+            link = create_magic_link(session, client.id)
             await telegram_client.send_message(
                 client.telegram_user_id,
                 "⚠️ Er ging iets mis bij het verwerken van je update. Probeer het nog eens, "
-                "of stuur een tekstbericht.",
+                f"of stuur een tekstbericht.\n\nJe bewerkpagina:\n{link}",
             )
 
 
