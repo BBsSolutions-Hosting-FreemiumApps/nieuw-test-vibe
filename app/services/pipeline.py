@@ -64,6 +64,15 @@ async def process_submission(session: Session, submission_id: int) -> None:
         submission.status = "error"
         submission.error = str(exc)[:1000]
         session.commit()
+        from app.models import Client
+
+        client = session.get(Client, submission.client_id)
+        if client and client.telegram_user_id:
+            await telegram_client.send_message(
+                client.telegram_user_id,
+                "⚠️ Er ging iets mis bij het verwerken van je update. Probeer het nog eens, "
+                "of stuur een tekstbericht.",
+            )
 
 
 def store_media(submission_id: int, kind: str, filename: str, data: bytes) -> str:

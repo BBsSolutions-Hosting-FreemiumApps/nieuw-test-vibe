@@ -76,7 +76,7 @@ async def telegram_hook(
     if message.get("voice") or message.get("audio"):
         file_id = (message.get("voice") or message.get("audio"))["file_id"]
         data = await telegram_client.download_file(file_id)
-        rel = pipeline.store_media(submission.id, "audio", "audio.ogg", data)
+        rel = pipeline.store_media(submission.id, "audio", "audio.oga", data)
         session.add(Asset(submission_id=submission.id, kind="audio", original_path=rel))
 
     session.commit()
