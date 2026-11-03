@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mijn updates</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <h1>Hallo {{ client_name or '' }} 👋</h1>
+    <p class="sub">Tik op een update om tekst of foto te wijzigen. Wijzigingen worden automatisch herschreven en geoptimaliseerd.</p>
+  </header>
+
+  {% for item in items %}
+  <section class="card status-{{ item.status }}">
+    <div class="status">{{ item.status }}</div>
+    {% if item.photo %}
+    <img src="/media/{{ item.photo }}" alt="foto" class="preview">
+    {% endif %}
+    <form method="post" action="/bewerk/{{ token }}/opslaan" enctype="multipart/form-data" class="form">
+      <input type="hidden" name="submission_id" value="{{ item.id }}">
+      <label>Titel
+        <input type="text" name="title" value="{{ item.title }}" maxlength="300">
+      </label>
+      <label>Tekst
+        <textarea name="text" rows="5">{{ item.text }}</textarea>
+      </label>
+      <label class="filelabel">📷 Foto vervangen
+        <input type="file" name="photo" accept="image/*">
+      </label>
+      <button type="submit" class="primary">Opslaan &amp; verwerken</button>
+    </form>
+  </section>
+  {% endfor %}
+
+  {% if not items %}
+  <p class="empty">Nog geen updates. Stuur een bericht via de Telegram-bot om te beginnen.</p>
+  {% endif %}
+</main>
+</body>
+</html>
