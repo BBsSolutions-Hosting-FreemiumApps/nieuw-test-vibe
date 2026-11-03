@@ -18,11 +18,7 @@ services:
       - key: OPENAI_API_KEY
         sync: false
       - key: MEDIA_DIR
-        value: /opt/render/project/src/media
-    disk:
-      name: media
-      mountPath: /opt/render/project/src/media
-      sizeGB: 1
+        value: ./media
 
 databases:
   - name: motor-db
