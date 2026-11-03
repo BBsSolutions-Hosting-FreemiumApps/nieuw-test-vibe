@@ -12,11 +12,21 @@ _engine = None
 _SessionLocal = None
 
 
+def normalize_db_url(url: str) -> str:
+    if url.startswith("postgres://"):
+        return url.replace("postgres://", "postgresql+psycopg2://", 1)
+    if url.startswith("postgresql+psycopg://"):
+        return url.replace("postgresql+psycopg://", "postgresql+psycopg2://", 1)
+    if url.startswith("postgresql://"):
+        return url.replace("postgresql://", "postgresql+psycopg2://", 1)
+    return url
+
+
 def init_engine(database_url: str | None = None):
     global _engine, _SessionLocal
     if _engine is not None:
         return _engine
-    url = database_url or get_settings().database_url
+    url = normalize_db_url(database_url or get_settings().database_url)
     _engine = create_engine(url, connect_args={"check_same_thread": False} if url.startswith("sqlite") else {})
     _SessionLocal = sessionmaker(bind=_engine, autoflush=False, expire_on_commit=False)
     return _engine
