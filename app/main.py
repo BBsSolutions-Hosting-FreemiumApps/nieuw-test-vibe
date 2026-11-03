@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from app.api import edit, health, telegram_webhook
+from app.api import edit, health, site, telegram_webhook
 from app.config import get_settings
 from app.db import create_all
 from app.services.storage import ensure_media_dir
@@ -11,6 +11,7 @@ app = FastAPI(title="Content Motor", version="0.1.0")
 app.include_router(health.router)
 app.include_router(telegram_webhook.router)
 app.include_router(edit.router)
+app.include_router(site.router)
 
 
 @app.on_event("startup")
